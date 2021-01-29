@@ -1,6 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
+const fs = require("fs")
+const path = require("path")
+
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 const contactsRouter = require('./routes/contacts.routes')
+
 
 const PORT = process.env.port || 8080;
 
@@ -18,11 +25,12 @@ class Server {
     this.server.use(
       cors({
         origin: '*'
-    }))
+    }));
+    this.server.use(morgan('combined', { stream: accessLogStream }))
   }
   
   initialRoutes() {
-    this.server.use('/api/contacts', contactsRouter)
+    this.server.use('/api/contacts', contactsRouter);
   }
 
   listen() {

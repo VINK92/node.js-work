@@ -106,6 +106,24 @@ class ContactsController {
     next();
   }
 
+  async validateUpdateContact(req, res, next) {
+    const validationRules = Joi.object({
+      name: Joi.string(),
+      email: Joi.string(),
+      phone: Joi.string(),
+    })
+
+    const resValidation = validationRules.validate(req.body)
+
+    if(resValidation.error) {
+      return res.status(400).send(resValidation.error)
+    } else if (req.body !== {}) {
+      return res.status(400).send('You need to enter at least 1 field to change!')
+    }
+
+    next();
+  }
+
 }
 
 module.exports = new ContactsController();

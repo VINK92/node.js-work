@@ -1,28 +1,45 @@
-const func = require('./contacts');
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+const fs = require("fs")
+const path = require("path")
 
-const argv = require('yargs').argv;
 
-function invokeAction({ action, id, name, email, phone }) {
-  switch (action) {
-    case 'list':
-      func.listContacts();
-      break;
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+const contactsRouter = require('./routes/contacts.routes')
 
-    case 'get':
-      func.getContactById(id);
-      break;
 
-    case 'add':
-      func.addContact(name, email, phone);
-      break;
+const PORT = process.env.port || 8080;
 
-    case 'remove':
-      func.removeContact(id);
-      break;
+class Server {
 
-    default:
-      console.warn('\x1B[31m Unknown action type!');
+  start() {
+    this.server = express();
+    this.initialMiddleware();
+    this.initialRoutes();
+    this.listen();
   }
+
+  initialMiddleware() {
+    this.server.use(express.json());
+    this.server.use(
+      cors({
+        origin: '*'
+    }));
+    this.server.use(morgan('combined', { stream: accessLogStream }))
+  }
+  
+  initialRoutes() {
+    this.server.use('/api/contacts', contactsRouter);
+  }
+
+  listen() {
+    this.server.listen(PORT, () => {
+      console.log('Server is listening on port: ', PORT);
+    })
+  }
+
 }
 
-invokeAction(argv);
+const server = new Server();
+server.start();

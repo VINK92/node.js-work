@@ -4,28 +4,28 @@ const Contact = require("../Model/Contacts")
 class ContactsController {
   async getContacts(req, res) {
     try {
-      const contacts = await Contact.find();
-      res.status(200);
-      res.json(contacts);
-      res.end();
+      const contacts = await Contact.find()
+      res.status(200)
+      res.json(contacts)
+      res.end()
     } catch (error) {
-      console.log('Error: ', error);
-      process.exit(1);
+      console.log("Error: ", error)
+      process.exit(1)
     }
   }
 
   async getContactById(req, res) {
     const {
       params: { contactId },
-    } = req;
+    } = req
     try {
       const contact = await Contact.findById(contactId)
       res.status(200)
       res.json(contact)
       res.end()
     } catch (error) {
-      console.log('Error: ', error);
-      process.exit(1);
+      console.log("Error: ", error)
+      process.exit(1)
     }
   }
 
@@ -36,7 +36,7 @@ class ContactsController {
       phone: req.body.phone,
       subscription: req.body.subscription,
       password: req.body.password,
-      token: req.body.token
+      token: req.body.token,
     })
     try {
       await newContact.save()
@@ -45,7 +45,7 @@ class ContactsController {
       res.json(newContact)
       res.end()
     } catch (e) {
-      console.log('Error', e);
+      console.log("Error", e)
       return process.exit(1)
     }
   }
@@ -53,18 +53,17 @@ class ContactsController {
   async updateContact(req, res) {
     const {
       params: { contactId },
-    } = req;
-    delete req.body._id;
+    } = req
     try {
-      await Contact.findByIdAndUpdate(contactId, req.body);
-      const updatedContact = await Contact.findById(contactId);
-      console.log("Contact is updatede: ", updatedContact);
+      await Contact.findByIdAndUpdate(contactId, req.body)
+      const updatedContact = await Contact.findById(contactId)
+      console.log("Contact is updatede: ", updatedContact)
       res.status(200)
       res.json(updatedContact)
       res.end()
     } catch (error) {
-      console.log('Error: ', error);
-      process.exit(1);
+      console.log("Error: ", error)
+      process.exit(1)
     }
   }
 
@@ -72,30 +71,30 @@ class ContactsController {
     try {
       const {
         params: { contactId },
-      } = req;
-      await Contact.findByIdAndRemove({_id: contactId})
+      } = req
+      await Contact.findByIdAndRemove({ _id: contactId })
       res.status(200)
       res.json({ message: "contact deleted" })
       res.end()
     } catch (error) {
-      console.log('Error: ', error);
-      process.exit(1);
+      console.log("Error: ", error)
+      process.exit(1)
     }
   }
 
   async validateId(req, res, next) {
     const {
       params: { contactId },
-    } = req;
+    } = req
     try {
-      const contact = await Contact.findById(contactId);
+      const contact = await Contact.findById(contactId)
       if (!contact) {
         return res.status(404).send({ message: "Not found" })
       }
       next()
     } catch (error) {
-      console.log('Error: ', error);
-      process.exit(1);
+      console.log("Error: ", error)
+      process.exit(1)
     }
   }
 

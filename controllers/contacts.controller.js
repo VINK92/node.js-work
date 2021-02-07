@@ -98,24 +98,24 @@ class ContactsController {
     }
   }
 
-  // async validateCreateContact(req, res, next) {
-  //   const validationRules = Joi.object({
-  //     name: Joi.string().required(),
-  //     email: Joi.string().required(),
-  //     phone: Joi.string().required(),
-  //     subscription: Joi.string().required(),
-  //     password: Joi.string().required(),
-  //     token: Joi.string().required(),
-  //   })
+  async validateCreateContact(req, res, next) {
+    const validationRules = Joi.object({
+      name: Joi.string().required(),
+      email: Joi.string().required(),
+      phone: Joi.string().required(),
+      subscription: Joi.string().required(),
+      password: Joi.string().required(),
+      token: Joi.string().required(),
+    })
 
-  //   const resValidation = validationRules.validate(req.body)
+    const resValidation = validationRules.validate(req.body)
 
-  //   if (resValidation.error) {
-  //     return res.status(400).send(resValidation.error)
-  //   }
+    if (resValidation.error) {
+      return res.status(400).send(resValidation.error)
+    }
 
-  //   next()
-  // }
+    next()
+  }
 
   async validateUpdateContact(req, res, next) {
     const validationRules = Joi.object({

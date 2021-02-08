@@ -54,9 +54,13 @@ class ContactsController {
     const {
       params: { contactId },
     } = req
+    const update = {
+      ...req.body,
+      new: true,
+    }
     try {
-      await Contact.findByIdAndUpdate(contactId, req.body)
-      const updatedContact = await Contact.findById(contactId)
+      const updatedContact = await Contact.findOneAndUpdate(contactId, update)
+      // const updatedContact = await Contact.findById(contactId)
       console.log("Contact is updatede: ", updatedContact)
       res.status(200)
       res.json(updatedContact)

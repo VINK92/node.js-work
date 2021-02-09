@@ -3,7 +3,11 @@ const cors = require('cors');
 const morgan = require('morgan');
 const fs = require("fs")
 const path = require("path")
+const mongoose = require("mongoose")
+const dotenv = require('dotenv');
 
+dotenv.config();
+const URI = process.env.URI_DB_CONTACTS
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 const contactsRouter = require('./routes/contacts.routes')
@@ -18,6 +22,7 @@ class Server {
     this.initialMiddleware();
     this.initialRoutes();
     this.listen();
+    this.initMongoose();
   }
 
   initialMiddleware() {
@@ -37,6 +42,16 @@ class Server {
     this.server.listen(PORT, () => {
       console.log('Server is listening on port: ', PORT);
     })
+  }
+
+  async initMongoose() {
+    try {
+      if(await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })) {
+        console.log("Database connection successful");
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
 }

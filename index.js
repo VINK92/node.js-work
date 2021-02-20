@@ -36,7 +36,7 @@ class Server {
 
   initialRoutes() {
     this.server.use("/api/contacts", contactsRouter)
-    this.server.use("/auth", usersRouter)
+    this.server.use("/", usersRouter)
   }
 
   listen() {
@@ -47,7 +47,7 @@ class Server {
 
   async initMongoose() {
     try {
-      if (await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })) {
+      if (await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })) {
         console.log("Database connection successful")
       }
     } catch (e) {

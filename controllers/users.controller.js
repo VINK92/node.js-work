@@ -13,7 +13,6 @@ class ContactsController {
         })
       }
       const hashedPassword = await bcrypt.hash(req.body.password, 14)
-      console.log(req.body)
       const newUser = await User.create({
         ...req.body,
         password: hashedPassword,
@@ -50,8 +49,6 @@ class ContactsController {
     try {
       const { _id } = req.user
       const user = await User.findByIdAndUpdate(_id, { token: null })
-      console.log("_id", _id)
-      console.log("user", user)
       res.status(204).json(user)
     } catch (error) {
       res.status(401).send({
@@ -59,7 +56,6 @@ class ContactsController {
       })
     }
   }
-
   async validateUser(req, res, next) {
     const validationRules = Joi.object({
       email: Joi.string().required(),
@@ -74,7 +70,6 @@ class ContactsController {
 
     next()
   }
-
   async authorize(req, res, next) {
     try {
       const authHeader = req.get("Authorization")
@@ -93,6 +88,43 @@ class ContactsController {
       res.status(401).send(error)
     }
     next()
+  }
+  async getCurrentUser(req, res, next) {
+    try {
+      const { _id } = req.user
+      const user = await User.findById(_id)
+      res.status(200).json({ email: user.email, subscription: user.subscription })
+    } catch (error) {
+      res.status(401).send({
+        message: "Not authorized",
+      })
+    }
+  }
+  async validateUserSubscription(req, res, next) {
+    const validationRules = Joi.object({
+      subscription: Joi.string().valid("free", "pro", "premium").required(),
+    })
+
+    const validationResult = validationRules.validate(req.body)
+
+    if (validationResult.error) {
+      return res.status(400).send(validationResult.error.message)
+    }
+
+    next()
+  }
+  async upDateSubscription(req, res, next) {
+    const {
+      params: { userId },
+    } = req
+
+    try {
+      const updatedUser = await User.findOneAndUpdate(userId, req.body.subscription, { new: true })
+      res.status(200).json(updatedUser)
+    } catch (error) {
+      console.log("Error: ", error)
+      process.exit(1)
+    }
   }
 }
 

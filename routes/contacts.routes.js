@@ -1,11 +1,18 @@
 const { Router } = require("express")
 const router = Router()
 const contactsController = require("../controllers/contacts.controller.js")
+const usersController = require("../controllers/users.controller")
 
-router.get("/", contactsController.getContacts)
-router.get("/:contactId", contactsController.validateId, contactsController.getContactById)
-router.post("/", contactsController.validateCreateContact, contactsController.addContact)
-router.patch("/:contactId", contactsController.validateId, contactsController.validateUpdateContact, contactsController.updateContact)
-router.delete("/:contactId", contactsController.validateId, contactsController.removeContact)
+router.get("/", usersController.authorize, contactsController.getContacts)
+router.get("/:contactId", usersController.authorize, contactsController.validateId, contactsController.getContactById)
+router.post("/", usersController.authorize, contactsController.validateCreateContact, contactsController.addContact)
+router.patch(
+  "/:contactId",
+  usersController.authorize,
+  contactsController.validateId,
+  contactsController.validateUpdateContact,
+  contactsController.updateContact
+)
+router.delete("/:contactId", usersController.authorize, contactsController.validateId, contactsController.removeContact)
 
 module.exports = router

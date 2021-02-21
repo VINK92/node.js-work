@@ -4,10 +4,19 @@ const Contact = require("../Model/Contacts")
 class ContactsController {
   async getContacts(req, res) {
     try {
-      const contacts = await Contact.find()
-      res.status(200)
-      res.json(contacts)
-      res.end()
+      const {
+        query: { sub, page, limit = 20 },
+      } = req
+      const { docs: contacts } = await Contact.paginate(
+        sub ? { subscription: sub } : {},
+        page
+          ? {
+              page: page,
+              limit: limit,
+            }
+          : {}
+      )
+      res.status(200).json(contacts)
     } catch (error) {
       console.log("Error: ", error)
       process.exit(1)

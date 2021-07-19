@@ -18,6 +18,10 @@ const user = new Schema({
     type: String,
     required: false,
   },
+  avatarURL: {
+    type: String,
+    required: false,
+  },
 })
 
 module.exports = model("User", user)

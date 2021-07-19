@@ -5,6 +5,7 @@ const fs = require("fs")
 const path = require("path")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
+const { static } = require("express")
 
 dotenv.config()
 const URI = process.env.URI_DB_CONTACTS
@@ -37,6 +38,7 @@ class Server {
   initialRoutes() {
     this.server.use("/api/contacts", contactsRouter)
     this.server.use("/", usersRouter)
+    this.server.use("/images", express.static("public"))
   }
 
   listen() {
